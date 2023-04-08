@@ -1,0 +1,24 @@
+*** SPICE deck for cell Multiplexer{sch} from library term_project
+*** Created on Çar Ara 28, 2022 14:44:01
+*** Last revised on Per Ara 29, 2022 14:13:12
+*** Written on Per Ara 29, 2022 14:13:16 by Electric VLSI Design System, version 9.07
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: Multiplexer{sch}
+Mnmos@7 F notS B gnd N L=0.36U W=1.8U
+Mnmos@8 F S A gnd N L=0.36U W=1.8U
+Mpmos@7 F S B vdd P L=0.36U W=1.8U
+Mpmos@8 F notS A vdd P L=0.36U W=1.8U
+
+* Spice Code nodes in cell cell 'Multiplexer{sch}'
+vdd vdd 0 dc 5
+vs S 0 DC 0 pulse 0 5 1n 1n 1n 20m 40m
+vns notS 5 DC 5 pulse 5 0 1n 1n 1n 20m 40m
+va A 0 DC 0 pulse 0 5 1n 1n 1n 10m 20m
+vb B 0 DC 0 pulse 0 5 1n 1n 1n 5m 10m
+.tran 0 40m
+.include /Applications/electric_vlsi/process/C5_models.txt
+.END

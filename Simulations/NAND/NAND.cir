@@ -1,0 +1,22 @@
+*** SPICE deck for cell NAND{sch} from library term_project
+*** Created on Per Eki 06, 2022 17:52:59
+*** Last revised on Pzt Ara 26, 2022 09:22:49
+*** Written on Sal Ara 27, 2022 14:39:58 by Electric VLSI Design System, version 9.07
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: NAND{sch}
+Mnmos@1 AnandB A net@15 gnd NMOS L=0.36U W=1.8U
+Mnmos@2 net@15 B gnd gnd NMOS L=0.36U W=1.8U
+Mpmos@0 AnandB A vdd vdd PMOS L=0.36U W=1.8U
+Mpmos@1 AnandB B vdd vdd PMOS L=0.36U W=1.8U
+
+* Spice Code nodes in cell cell 'NAND{sch}'
+vdd vdd 0 dc 5
+va A 0 DC 0 pulse 0 5 1n 1n 1n 10m 20m
+vb B 0 DC 0 pulse 0 5 1n 1n 1n 5m 10m
+.tran 0 20m
+.include /Applications/electric_vlsi/process/C5_models.txt
+.END

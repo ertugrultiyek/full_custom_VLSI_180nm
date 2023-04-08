@@ -1,0 +1,22 @@
+*** SPICE deck for cell NOR_(FOR_OR){sch} from library term_project
+*** Created on Cmt Ara 24, 2022 11:09:03
+*** Last revised on Sal Ara 27, 2022 14:42:59
+*** Written on Sal Ara 27, 2022 14:43:05 by Electric VLSI Design System, version 9.07
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: NOR_(FOR_OR){sch}
+Mnmos@0 AnorB A gnd gnd NMOS L=0.36U W=0.9U
+Mnmos@1 AnorB B gnd gnd NMOS L=0.36U W=0.9U
+Mpmos@0 AnorB B net@19 vdd PMOS L=0.36U W=3.6U
+Mpmos@1 net@19 A vdd vdd PMOS L=0.36U W=3.6U
+
+* Spice Code nodes in cell cell 'NOR_(FOR_OR){sch}'
+vdd vdd 0 dc 5
+va A 0 DC 0 pulse 0 5 1n 1n 1n 10m 20m
+vb B 0 DC 0 pulse 0 5 1n 1n 1n 5m 10m
+.tran 0 20m
+.include /Applications/electric_vlsi/process/C5_models.txt
+.END

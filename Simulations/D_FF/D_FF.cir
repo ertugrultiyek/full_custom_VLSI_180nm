@@ -1,0 +1,49 @@
+*** SPICE deck for cell D_FF{sch} from library term_project
+*** Created on Cum Ara 30, 2022 01:32:58
+*** Last revised on Cum Ara 30, 2022 01:36:00
+*** Written on Cum Ara 30, 2022 01:36:06 by Electric VLSI Design System, version 9.07
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+
+*** SUBCIRCUIT term_project__Multiplexer FROM CELL Multiplexer{sch}
+.SUBCKT term_project__Multiplexer A B F notS S
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@7 F notS B gnd N L=0.36U W=1.8U
+Mnmos@8 F S A gnd N L=0.36U W=1.8U
+Mpmos@7 F S B vdd P L=0.36U W=1.8U
+Mpmos@8 F notS A vdd P L=0.36U W=1.8U
+.ENDS term_project__Multiplexer
+
+*** SUBCIRCUIT term_project__inverter FROM CELL inverter{sch}
+.SUBCKT term_project__inverter A notA
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 notA A gnd gnd NMOS L=0.36U W=0.9U
+Mpmos@0 notA A vdd vdd PMOS L=0.36U W=1.8U
+.ENDS term_project__inverter
+
+*** SUBCIRCUIT term_project__D_LATCH FROM CELL D_LATCH{sch}
+.SUBCKT term_project__D_LATCH clk D notQ Q
+** GLOBAL gnd
+** GLOBAL vdd
+XMultiple@0 D Q net@1 net@14 clk term_project__Multiplexer
+Xinverter@0 net@1 notQ term_project__inverter
+Xinverter@1 notQ Q term_project__inverter
+Xinverter@2 clk net@14 term_project__inverter
+.ENDS term_project__D_LATCH
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: D_FF{sch}
+XD_LATCH@0 clk D D_LATCH@0_notQ net@0 term_project__D_LATCH
+XD_LATCH@1 net@1 net@0 notQ Q term_project__D_LATCH
+Xinverter@0 clk net@1 term_project__inverter
+
+* Spice Code nodes in cell cell 'D_FF{sch}'
+vdd vdd 0 dc 5
+vd D 0 DC 0 pulse 5 0 1n 1n 1n 10m 20m
+vclk clk 0 DC 0 pulse 5 0 1n 1n 1n 9m 20m
+.tran 0 80m
+.include /Applications/electric_vlsi/process/C5_models.txt
+.END

@@ -1,0 +1,241 @@
+*** SPICE deck for cell 8_bit_alu{sch} from library term_project
+*** Created on Pzt Oca 02, 2023 16:46:18
+*** Last revised on Çar Oca 04, 2023 08:15:36
+*** Written on Çar Oca 04, 2023 08:16:51 by Electric VLSI Design System, version 9.07
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+
+*** SUBCIRCUIT term_project__3NAND FROM CELL 3NAND{sch}
+.SUBCKT term_project__3NAND A ABC_ B C
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@1 ABC_ A net@15 gnd NMOS L=0.36U W=1.8U
+Mnmos@2 net@15 B net@33 gnd NMOS L=0.36U W=1.8U
+Mnmos@3 net@33 C gnd gnd NMOS L=0.36U W=1.8U
+Mpmos@0 ABC_ A vdd vdd PMOS L=0.36U W=1.8U
+Mpmos@1 ABC_ B vdd vdd PMOS L=0.36U W=1.8U
+Mpmos@2 ABC_ C vdd vdd PMOS L=0.36U W=1.8U
+.ENDS term_project__3NAND
+
+*** SUBCIRCUIT term_project__inverter FROM CELL inverter{sch}
+.SUBCKT term_project__inverter A notA
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 notA A gnd gnd NMOS L=0.36U W=0.9U
+Mpmos@0 notA A vdd vdd PMOS L=0.36U W=1.8U
+.ENDS term_project__inverter
+
+*** SUBCIRCUIT term_project__3NAND/AND FROM CELL 3NAND/AND{sch}
+.SUBCKT term_project__3NAND/AND A ABC ABC_ B C
+** GLOBAL gnd
+** GLOBAL vdd
+X_3NAND@1 A ABC_ B C term_project__3NAND
+Xinverter@0 ABC_ ABC term_project__inverter
+.ENDS term_project__3NAND/AND
+
+*** SUBCIRCUIT term_project__Multiplexer FROM CELL Multiplexer{sch}
+.SUBCKT term_project__Multiplexer A B F notS S
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@7 F notS B gnd N L=0.36U W=1.8U
+Mnmos@8 F S A gnd N L=0.36U W=1.8U
+Mpmos@7 F S B vdd P L=0.36U W=1.8U
+Mpmos@8 F notS A vdd P L=0.36U W=1.8U
+.ENDS term_project__Multiplexer
+
+*** SUBCIRCUIT term_project__NAND FROM CELL NAND{sch}
+.SUBCKT term_project__NAND A AnandB B
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@1 AnandB A net@15 gnd NMOS L=0.36U W=1.8U
+Mnmos@2 net@15 B gnd gnd NMOS L=0.36U W=1.8U
+Mpmos@0 AnandB A vdd vdd PMOS L=0.36U W=1.8U
+Mpmos@1 AnandB B vdd vdd PMOS L=0.36U W=1.8U
+.ENDS term_project__NAND
+
+*** SUBCIRCUIT term_project__NAND/AND FROM CELL NAND/AND{sch}
+.SUBCKT term_project__NAND/AND A AandB AnandB B
+** GLOBAL gnd
+** GLOBAL vdd
+XNAND@0 A AnandB B term_project__NAND
+Xinverter@0 AnandB AandB term_project__inverter
+.ENDS term_project__NAND/AND
+
+*** SUBCIRCUIT term_project__AND FROM CELL AND{sch}
+.SUBCKT term_project__AND A AandB B
+** GLOBAL gnd
+** GLOBAL vdd
+XNAND@0 A net@2 B term_project__NAND
+Xinverter@0 net@2 AandB term_project__inverter
+.ENDS term_project__AND
+
+*** SUBCIRCUIT term_project__XOR FROM CELL XOR{sch}
+.SUBCKT term_project__XOR A AxorB B
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 net@1 B gnd gnd N L=0.36U W=0.9U
+Mnmos@1 net@1 A AxorB gnd N L=0.36U W=0.9U
+Mnmos@2 B net@13 AxorB gnd N L=0.36U W=0.9U
+Mnmos@3 net@13 A gnd gnd N L=0.36U W=0.9U
+Mpmos@0 vdd B net@1 vdd P L=0.36U W=1.8U
+Mpmos@1 net@1 net@13 AxorB vdd P L=0.36U W=1.8U
+Mpmos@2 B A AxorB vdd P L=0.36U W=1.8U
+Mpmos@3 vdd A net@13 vdd P L=0.36U W=1.8U
+.ENDS term_project__XOR
+
+*** SUBCIRCUIT term_project__Half_Adder FROM CELL Half_Adder{sch}
+.SUBCKT term_project__Half_Adder A A+B B Cout
+** GLOBAL gnd
+** GLOBAL vdd
+XAND@0 A Cout B term_project__AND
+XXOR@2 B A+B A term_project__XOR
+.ENDS term_project__Half_Adder
+
+*** SUBCIRCUIT term_project__NOR__FOR_OR_ FROM CELL NOR_(FOR_OR){sch}
+.SUBCKT term_project__NOR__FOR_OR_ A AnorB B
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 AnorB A gnd gnd NMOS L=0.36U W=0.9U
+Mnmos@1 AnorB B gnd gnd NMOS L=0.36U W=0.9U
+Mpmos@0 AnorB B net@19 vdd PMOS L=0.36U W=3.6U
+Mpmos@1 net@19 A vdd vdd PMOS L=0.36U W=3.6U
+.ENDS term_project__NOR__FOR_OR_
+
+*** SUBCIRCUIT term_project__OR FROM CELL OR{sch}
+.SUBCKT term_project__OR A AorB B
+** GLOBAL gnd
+** GLOBAL vdd
+XNOR@2 A net@0 B term_project__NOR__FOR_OR_
+Xinverter@0 net@0 AorB term_project__inverter
+.ENDS term_project__OR
+
+*** SUBCIRCUIT term_project__Full_Adder FROM CELL Full_Adder{sch}
+.SUBCKT term_project__Full_Adder A A+B B Cin Cout
+** GLOBAL gnd
+** GLOBAL vdd
+XHalf_Add@0 A net@0 B net@12 term_project__Half_Adder
+XHalf_Add@1 net@0 A+B Cin net@17 term_project__Half_Adder
+XOR@1 net@12 Cout net@17 term_project__OR
+.ENDS term_project__Full_Adder
+
+*** SUBCIRCUIT term_project__adder_subtractor FROM CELL adder_subtractor{sch}
+.SUBCKT term_project__adder_subtractor A B C/B_in C/B_out operator Result
+** GLOBAL gnd
+** GLOBAL vdd
+XFull_Add@0 A Result net@0 C/B_in C/B_out term_project__Full_Adder
+XXOR@0 operator net@0 B term_project__XOR
+.ENDS term_project__adder_subtractor
+
+*** SUBCIRCUIT term_project__AU_mid FROM CELL AU_mid{sch}
+.SUBCKT term_project__AU_mid A B C/B_out Cin Cout_inp notCin notS0 notS2 result S1 S2
+** GLOBAL gnd
+** GLOBAL vdd
+X_3NAND/AN@0 notCin net@125 net@124 notS0 notS2 term_project__3NAND/AND
+X_3NAND@0 notS2 net@44 notS0 Cin term_project__3NAND
+XMultiple@0 gnd B net@5 net@137 net@139 term_project__Multiplexer
+XMultiple@1 gnd Cout_inp net@55 net@124 net@125 term_project__Multiplexer
+XNAND/AND@0 net@44 net@139 net@137 net@45 term_project__NAND/AND
+XNAND@0 S1 net@45 S2 term_project__NAND
+Xadder_su@0 A net@5 net@55 C/B_out S2 result term_project__adder_subtractor
+.ENDS term_project__AU_mid
+
+*** SUBCIRCUIT term_project__NOR/OR FROM CELL NOR/OR{sch}
+.SUBCKT term_project__NOR/OR A AnorB AorB B
+** GLOBAL gnd
+** GLOBAL vdd
+XNOR@2 A AnorB B term_project__NOR__FOR_OR_
+Xinverter@0 AnorB AorB term_project__inverter
+.ENDS term_project__NOR/OR
+
+*** SUBCIRCUIT term_project__D_LATCH FROM CELL D_LATCH{sch}
+.SUBCKT term_project__D_LATCH clk D notQ Q
+** GLOBAL gnd
+** GLOBAL vdd
+XMultiple@0 D Q net@1 net@14 clk term_project__Multiplexer
+Xinverter@0 net@1 notQ term_project__inverter
+Xinverter@1 notQ Q term_project__inverter
+Xinverter@2 clk net@14 term_project__inverter
+.ENDS term_project__D_LATCH
+
+*** SUBCIRCUIT term_project__D_FF FROM CELL D_FF{sch}
+.SUBCKT term_project__D_FF clk D notQ Q
+** GLOBAL gnd
+** GLOBAL vdd
+XD_LATCH@0 clk D D_LATCH@0_notQ net@0 term_project__D_LATCH
+XD_LATCH@1 net@1 net@0 notQ Q term_project__D_LATCH
+Xinverter@0 clk net@1 term_project__inverter
+.ENDS term_project__D_FF
+
+*** SUBCIRCUIT term_project__Shift_Register FROM CELL Shift_Register{sch}
+.SUBCKT term_project__Shift_Register clk Dir F L notDir R
+** GLOBAL gnd
+** GLOBAL vdd
+XD_FF@0 clk net@8 D_FF@0_notQ F term_project__D_FF
+XMultiple@0 R L net@8 notDir Dir term_project__Multiplexer
+.ENDS term_project__Shift_Register
+
+*** SUBCIRCUIT term_project__ALU_Mid_Bits FROM CELL ALU_Mid_Bits{sch}
+.SUBCKT term_project__ALU_Mid_Bits A B Buff_A C/B_in C/B_out Cin clk F L notCin notS0 notS2 R S0 S1 S2
+** GLOBAL gnd
+** GLOBAL vdd
+X_3nand_logic S0 net@89 net@92 S2 S1 term_project__3NAND/AND
+XAU Buff_A B C/B_out Cin C/B_in notCin notS0 notS2 net@58 S1 S2 term_project__AU_mid
+XNAND/AND@0 Buff_A net@176 NAND/AND@0_AnandB B term_project__NAND/AND
+XNOR/OR@1 Buff_A NOR/OR@1_AnorB net@168 B term_project__NOR/OR
+XShift_Reg clk Cin net@55 L notCin R term_project__Shift_Register
+Xarithmetic_mux net@55 net@58 net@48 net@92 net@89 term_project__Multiplexer
+Xbuff net@183 Buff_A term_project__inverter
+Xgate_mux net@168 net@176 net@38 Cin notCin term_project__Multiplexer
+Xinv A net@183 term_project__inverter
+Xinv_mux Buff_A net@183 net@35 Cin notCin term_project__Multiplexer
+Xlogic_mux net@35 net@38 net@43 S0 notS0 term_project__Multiplexer
+Xor_logic S1 net@53 net@52 S2 term_project__NOR/OR
+Xoutput_mux net@43 net@48 F net@52 net@53 term_project__Multiplexer
+
+.ENDS term_project__ALU_Mid_Bits
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: 8_bit_alu{sch}
+XALU[0] A[0] B[0] Buff_A[0] Cin C/B_out[0] Cin clk F[0] Buff_A[7] net@28 net@33 net@39 Buff_A[1] S[0] S[1] S[2] term_project__ALU_Mid_Bits
+XALU[1] A[1] B[1] Buff_A[1] C/B_out[0] C/B_out[1] Cin clk F[1] Buff_A[0] net@28 net@33 net@39 Buff_A[2] S[0] S[1] S[2] term_project__ALU_Mid_Bits
+XALU[2] A[2] B[2] Buff_A[2] C/B_out[1] C/B_out[2] Cin clk F[2] Buff_A[1] net@28 net@33 net@39 Buff_A[3] S[0] S[1] S[2] term_project__ALU_Mid_Bits
+XALU[3] A[3] B[3] Buff_A[3] C/B_out[2] C/B_out[3] Cin clk F[3] Buff_A[2] net@28 net@33 net@39 Buff_A[4] S[0] S[1] S[2] term_project__ALU_Mid_Bits
+XALU[4] A[4] B[4] Buff_A[4] C/B_out[3] C/B_out[4] Cin clk F[4] Buff_A[3] net@28 net@33 net@39 Buff_A[5] S[0] S[1] S[2] term_project__ALU_Mid_Bits
+XALU[5] A[5] B[5] Buff_A[5] C/B_out[4] C/B_out[5] Cin clk F[5] Buff_A[4] net@28 net@33 net@39 Buff_A[6] S[0] S[1] S[2] term_project__ALU_Mid_Bits
+XALU[6] A[6] B[6] Buff_A[6] C/B_out[5] C/B_out[6] Cin clk F[6] Buff_A[5] net@28 net@33 net@39 Buff_A[7] S[0] S[1] S[2] term_project__ALU_Mid_Bits
+XALU[7] A[7] B[7] Buff_A[7] C/B_out[6] C/B_out Cin clk F[7] Buff_A[6] net@28 net@33 net@39 Buff_A[0] S[0] S[1] S[2] term_project__ALU_Mid_Bits
+Xinverter@0 S[2] net@39 term_project__inverter
+Xinverter@1 S[0] net@33 term_project__inverter
+Xinverter@2 Cin net@28 term_project__inverter
+
+vdd vdd 0 dc 5
+
+** Inverter (A')
+vs2 S[2] 0 dc 5
+vs1 S[1] 0 dc 5
+vs0 S[0] 0 dc 5
+vcin Cin 0 dc 0
+
+va0 A[0] 0 DC 5
+va1 A[1] 0 DC 0
+va2 A[2] 0 DC 5
+va3 A[3] 0 DC 0
+va4 A[4] 0 DC 0
+va5 A[5] 0 DC 5
+va6 A[6] 0 DC 0
+va7 A[7] 0 DC 5
+
+vb0 B[0] 0 DC 0 pulse 5 0 1n 1n 1n 16m 32m
+vb1 B[1] 0 DC 0 pulse 5 0 1n 1n 1n 2m 4m
+vb2 B[2] 0 DC 0 pulse 5 0 1n 1n 1n 16m 32m
+vb3 B[3] 0 DC 0 pulse 5 0 1n 1n 1n 2m 4m
+vb4 B[4] 0 DC 0 pulse 5 0 1n 1n 1n 8m 16m
+vb5 B[5] 0 DC 0 pulse 5 0 1n 1n 1n 2m 4m
+vb6 B[6] 0 DC 0 pulse 5 0 1n 1n 1n 16m 32m
+vb7 B[7] 0 DC 0 pulse 5 0 1n 1n 1n 2m 4m
+
+vclk clk 0 DC 0 pulse 5 0 1n 1n 1n 1.8m 4m
+.tran 0 32m
+.include /Applications/electric_vlsi/process/C5_models.txt
+.END

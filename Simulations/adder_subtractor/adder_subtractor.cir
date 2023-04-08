@@ -1,0 +1,97 @@
+*** SPICE deck for cell adder_subtractor{sch} from library term_project
+*** Created on Sal Ara 27, 2022 14:52:27
+*** Last revised on Çar Ara 28, 2022 17:25:37
+*** Written on Çar Ara 28, 2022 17:26:15 by Electric VLSI Design System, version 9.07
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+
+*** SUBCIRCUIT term_project__NAND FROM CELL NAND{sch}
+.SUBCKT term_project__NAND A AnandB B
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@1 AnandB A net@15 gnd NMOS L=0.36U W=1.8U
+Mnmos@2 net@15 B gnd gnd NMOS L=0.36U W=1.8U
+Mpmos@0 AnandB A vdd vdd PMOS L=0.36U W=1.8U
+Mpmos@1 AnandB B vdd vdd PMOS L=0.36U W=1.8U
+.ENDS term_project__NAND
+
+*** SUBCIRCUIT term_project__inverter FROM CELL inverter{sch}
+.SUBCKT term_project__inverter A notA
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 notA A gnd gnd NMOS L=0.36U W=0.9U
+Mpmos@0 notA A vdd vdd PMOS L=0.36U W=1.8U
+.ENDS term_project__inverter
+
+*** SUBCIRCUIT term_project__AND FROM CELL AND{sch}
+.SUBCKT term_project__AND A AandB B
+** GLOBAL gnd
+** GLOBAL vdd
+XNAND@0 A net@2 B term_project__NAND
+Xinverter@0 net@2 AandB term_project__inverter
+.ENDS term_project__AND
+
+*** SUBCIRCUIT term_project__XOR FROM CELL XOR{sch}
+.SUBCKT term_project__XOR A AxorB B
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 net@1 B gnd gnd N L=0.36U W=0.9U
+Mnmos@1 net@1 A AxorB gnd N L=0.36U W=0.9U
+Mnmos@2 B net@13 AxorB gnd N L=0.36U W=0.9U
+Mnmos@3 net@13 A gnd gnd N L=0.36U W=0.9U
+Mpmos@0 vdd B net@1 vdd P L=0.36U W=1.8U
+Mpmos@1 net@1 net@13 AxorB vdd P L=0.36U W=1.8U
+Mpmos@2 B A AxorB vdd P L=0.36U W=1.8U
+Mpmos@3 vdd A net@13 vdd P L=0.36U W=1.8U
+.ENDS term_project__XOR
+
+*** SUBCIRCUIT term_project__Half_Adder FROM CELL Half_Adder{sch}
+.SUBCKT term_project__Half_Adder A A+B B Cout
+** GLOBAL gnd
+** GLOBAL vdd
+XAND@0 A Cout B term_project__AND
+XXOR@2 B A+B A term_project__XOR
+.ENDS term_project__Half_Adder
+
+*** SUBCIRCUIT term_project__NOR__FOR_OR_ FROM CELL NOR_(FOR_OR){sch}
+.SUBCKT term_project__NOR__FOR_OR_ A AnorB B
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 AnorB A gnd gnd NMOS L=0.36U W=0.9U
+Mnmos@1 AnorB B gnd gnd NMOS L=0.36U W=0.9U
+Mpmos@0 AnorB B net@19 vdd PMOS L=0.36U W=3.6U
+Mpmos@1 net@19 A vdd vdd PMOS L=0.36U W=3.6U
+.ENDS term_project__NOR__FOR_OR_
+
+*** SUBCIRCUIT term_project__OR FROM CELL OR{sch}
+.SUBCKT term_project__OR A AorB B
+** GLOBAL gnd
+** GLOBAL vdd
+XNOR@2 A net@0 B term_project__NOR__FOR_OR_
+Xinverter@0 net@0 AorB term_project__inverter
+.ENDS term_project__OR
+
+*** SUBCIRCUIT term_project__Full_Adder FROM CELL Full_Adder{sch}
+.SUBCKT term_project__Full_Adder A A+B B Cin Cout
+** GLOBAL gnd
+** GLOBAL vdd
+XHalf_Add@0 A net@0 B net@12 term_project__Half_Adder
+XHalf_Add@1 net@0 A+B Cin net@17 term_project__Half_Adder
+XOR@1 net@12 Cout net@17 term_project__OR
+.ENDS term_project__Full_Adder
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: adder_subtractor{sch}
+XFull_Add@0 A Result net@0 C/B_in C/B_out term_project__Full_Adder
+XXOR@0 operator net@0 B term_project__XOR
+
+* Spice Code nodes in cell cell 'adder_subtractor{sch}'
+vdd vdd 0 dc 5
+vop operator 0 DC 0 pulse 0 5 1n 1n 1n 20m 40m
+vcin C/B_in 0 DC 0 pulse 0 5 1n 1n 1n 10m 20m
+va A 0 DC 0 pulse 0 5 1n 1n 1n 40m 80m
+vb B 0 DC 0 pulse 0 5 1n 1n 1n 5m 10m
+.tran 0 40m
+.include /Applications/electric_vlsi/process/C5_models.txt
+.END

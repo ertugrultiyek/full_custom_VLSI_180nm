@@ -1,0 +1,38 @@
+*** SPICE deck for cell AND{sch} from library term_project
+*** Created on Cum Ara 23, 2022 11:33:38
+*** Last revised on Sal Ara 27, 2022 14:40:52
+*** Written on Sal Ara 27, 2022 14:41:01 by Electric VLSI Design System, version 9.07
+*** Layout tech: mocmos, foundry MOSIS
+*** UC SPICE *** , MIN_RESIST 4.0, MIN_CAPAC 0.1FF
+
+*** SUBCIRCUIT term_project__NAND FROM CELL NAND{sch}
+.SUBCKT term_project__NAND A AnandB B
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@1 AnandB A net@15 gnd NMOS L=0.36U W=1.8U
+Mnmos@2 net@15 B gnd gnd NMOS L=0.36U W=1.8U
+Mpmos@0 AnandB A vdd vdd PMOS L=0.36U W=1.8U
+Mpmos@1 AnandB B vdd vdd PMOS L=0.36U W=1.8U
+.ENDS term_project__NAND
+
+*** SUBCIRCUIT term_project__inverter FROM CELL inverter{sch}
+.SUBCKT term_project__inverter A notA
+** GLOBAL gnd
+** GLOBAL vdd
+Mnmos@0 notA A gnd gnd NMOS L=0.36U W=0.9U
+Mpmos@0 notA A vdd vdd PMOS L=0.36U W=1.8U
+.ENDS term_project__inverter
+
+.global gnd vdd
+
+*** TOP LEVEL CELL: AND{sch}
+XNAND@0 A net@2 B term_project__NAND
+Xinverter@0 net@2 AandB term_project__inverter
+
+* Spice Code nodes in cell cell 'AND{sch}'
+vdd vdd 0 dc 5
+va A 0 DC 0 pulse 0 5 1n 1n 1n 10m 20m
+vb B 0 DC 0 pulse 0 5 1n 1n 1n 5m 10m
+.tran 0 20m
+.include /Applications/electric_vlsi/process/C5_models.txt
+.END
